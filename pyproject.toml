@@ -34,10 +34,10 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://truelist.io"
-Documentation = "https://github.com/truelist/truelist-python#readme"
-Repository = "https://github.com/truelist/truelist-python"
-Changelog = "https://github.com/truelist/truelist-python/blob/main/CHANGELOG.md"
-Issues = "https://github.com/truelist/truelist-python/issues"
+Documentation = "https://github.com/Truelist-io-Email-Validation/truelist-python#readme"
+Repository = "https://github.com/Truelist-io-Email-Validation/truelist-python"
+Changelog = "https://github.com/Truelist-io-Email-Validation/truelist-python/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Truelist-io-Email-Validation/truelist-python/issues"
 
 [tool.hatch.version]
 path = "src/truelist/_version.py"
