@@ -22,7 +22,7 @@ class AsyncEmailResource:
         self._max_retries = max_retries
 
     async def validate(self, email: str) -> ValidationResult:
-        """Validate an email address using server-side verification.
+        """Validate an email address.
 
         Args:
             email: The email address to validate.
@@ -33,29 +33,9 @@ class AsyncEmailResource:
         response = await async_request(
             self._client,
             "POST",
-            "/api/v1/verify",
+            "/api/v1/verify_inline",
             max_retries=self._max_retries,
-            json={"email": email},
-        )
-        return _parse_validation_result(response.json())
-
-    async def form_validate(self, email: str) -> ValidationResult:
-        """Validate an email address using form/frontend verification.
-
-        This endpoint has different rate limits suited for frontend form validation.
-
-        Args:
-            email: The email address to validate.
-
-        Returns:
-            A ValidationResult with the verification details.
-        """
-        response = await async_request(
-            self._client,
-            "POST",
-            "/api/v1/form_verify",
-            max_retries=self._max_retries,
-            json={"email": email},
+            params={"email": email},
         )
         return _parse_validation_result(response.json())
 
@@ -71,19 +51,22 @@ class AsyncAccountResource:
         """Get account information for the authenticated user.
 
         Returns:
-            An AccountInfo with email, plan, and credits.
+            An AccountInfo with account details.
         """
         response = await async_request(
             self._client,
             "GET",
-            "/api/v1/account",
+            "/me",
             max_retries=self._max_retries,
         )
         data: dict[str, Any] = response.json()
         return AccountInfo(
             email=data["email"],
-            plan=data["plan"],
-            credits=data["credits"],
+            name=data["name"],
+            uuid=data["uuid"],
+            time_zone=data.get("time_zone"),
+            is_admin_role=data.get("is_admin_role", False),
+            payment_plan=data["account"]["payment_plan"],
         )
 
 
@@ -144,12 +127,17 @@ class AsyncTruelist:
 
 
 def _parse_validation_result(data: dict[str, Any]) -> ValidationResult:
+    emails = data["emails"]
+    email_data = emails[0]
     return ValidationResult(
-        email=data["email"],
-        state=data["state"],
-        sub_state=data["sub_state"],
-        free_email=data["free_email"],
-        role=data["role"],
-        disposable=data["disposable"],
-        suggestion=data.get("suggestion"),
+        email=email_data["address"],
+        domain=email_data["domain"],
+        canonical=email_data.get("canonical"),
+        mx_record=email_data.get("mx_record"),
+        first_name=email_data.get("first_name"),
+        last_name=email_data.get("last_name"),
+        state=email_data["email_state"],
+        sub_state=email_data["email_sub_state"],
+        verified_at=email_data.get("verified_at"),
+        suggestion=email_data.get("did_you_mean"),
     )

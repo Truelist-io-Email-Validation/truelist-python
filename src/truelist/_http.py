@@ -97,12 +97,13 @@ def sync_request(
     *,
     max_retries: int,
     json: dict[str, Any] | None = None,
+    params: dict[str, str] | None = None,
 ) -> httpx.Response:
     last_exc: Exception | None = None
 
     for attempt in range(max_retries + 1):
         try:
-            response = client.request(method, url, json=json)
+            response = client.request(method, url, json=json, params=params)
         except httpx.ConnectError as exc:
             last_exc = exc
             if attempt < max_retries:
@@ -140,6 +141,7 @@ async def async_request(
     *,
     max_retries: int,
     json: dict[str, Any] | None = None,
+    params: dict[str, str] | None = None,
 ) -> httpx.Response:
     import asyncio
 
@@ -147,7 +149,7 @@ async def async_request(
 
     for attempt in range(max_retries + 1):
         try:
-            response = await client.request(method, url, json=json)
+            response = await client.request(method, url, json=json, params=params)
         except httpx.ConnectError as exc:
             last_exc = exc
             if attempt < max_retries:
