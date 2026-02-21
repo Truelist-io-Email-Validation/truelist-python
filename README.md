@@ -22,9 +22,9 @@ from truelist import Truelist
 client = Truelist("your-api-key")
 
 result = client.email.validate("user@example.com")
-print(result.state)       # "valid"
-print(result.sub_state)   # "ok"
-print(result.free_email)  # True
+print(result.state)       # "ok"
+print(result.sub_state)   # "email_ok"
+print(result.domain)      # "example.com"
 print(result.is_valid)    # True
 ```
 
@@ -120,20 +120,16 @@ Set `max_retries=0` to disable retries.
 ### Email Validation
 
 ```python
-# Server-side validation
 result = client.email.validate("user@example.com")
-
-# Form/frontend validation (different rate limits)
-result = client.email.form_validate("user@example.com")
 ```
 
 ### Account Info
 
 ```python
 account = client.account.get()
-print(account.email)    # "you@company.com"
-print(account.plan)     # "pro"
-print(account.credits)  # 9500
+print(account.email)         # "you@company.com"
+print(account.name)          # "Your Name"
+print(account.payment_plan)  # "pro"
 ```
 
 ## Types Reference
@@ -143,37 +139,38 @@ print(account.credits)  # 9500
 | Field | Type | Description |
 |-------|------|-------------|
 | `email` | `str` | The email address that was validated |
-| `state` | `str` | One of: `valid`, `invalid`, `risky`, `unknown` |
+| `domain` | `str` | The domain of the email address |
+| `canonical` | `str \| None` | The canonical (local) part of the email |
+| `mx_record` | `str \| None` | The MX record for the domain |
+| `first_name` | `str \| None` | First name associated with the email, if available |
+| `last_name` | `str \| None` | Last name associated with the email, if available |
+| `state` | `str` | One of: `ok`, `email_invalid`, `risky`, `unknown`, `accept_all` |
 | `sub_state` | `str` | Detailed reason (see below) |
-| `free_email` | `bool` | Whether the email is from a free provider |
-| `role` | `bool` | Whether the email is a role address (e.g., info@) |
-| `disposable` | `bool` | Whether the email is from a disposable provider |
+| `verified_at` | `str \| None` | Timestamp of when the verification was performed |
 | `suggestion` | `str \| None` | Suggested correction, if any |
 
-Convenience properties: `is_valid`, `is_invalid`, `is_risky`, `is_unknown`
+Convenience properties: `is_valid`, `is_invalid`, `is_risky`, `is_unknown`, `is_disposable`, `is_role`
 
 #### Sub-states
 
 | Sub-state | Description |
 |-----------|-------------|
-| `ok` | Email is valid |
-| `accept_all` | Domain accepts all emails (risky) |
-| `disposable_address` | Disposable email provider |
-| `role_address` | Role-based address (info@, admin@, etc.) |
-| `failed_mx_check` | Domain has no MX records |
-| `failed_spam_trap` | Known spam trap |
-| `failed_no_mailbox` | Mailbox does not exist |
-| `failed_greylisted` | Server temporarily rejected (greylisting) |
-| `failed_syntax_check` | Email syntax is invalid |
-| `unknown` | Could not determine status |
+| `email_ok` | Email is valid |
+| `is_disposable` | Disposable email provider |
+| `is_role` | Role-based address (info@, admin@, etc.) |
+| `unknown_error` | Could not determine status |
+| `failed_smtp_check` | SMTP check failed |
 
 ### `AccountInfo`
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `email` | `str` | Account email address |
-| `plan` | `str` | Current plan name |
-| `credits` | `int` | Remaining validation credits |
+| `name` | `str` | Account holder name |
+| `uuid` | `str` | Account UUID |
+| `time_zone` | `str \| None` | Account time zone |
+| `is_admin_role` | `bool` | Whether the user has admin role |
+| `payment_plan` | `str` | Current payment plan |
 
 ### Exceptions
 
