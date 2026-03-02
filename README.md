@@ -1,5 +1,6 @@
 # Truelist Python SDK
 
+[![Free tier](https://img.shields.io/badge/free_plan-100_validations-4A7C59?style=flat-square)](https://truelist.io/pricing)
 Official Python SDK for the [Truelist.io](https://truelist.io) email validation API. Validate email addresses in real-time with a simple, type-safe interface.
 
 - Sync and async clients
@@ -7,6 +8,9 @@ Official Python SDK for the [Truelist.io](https://truelist.io) email validation 
 - Full type annotations (mypy strict compatible)
 - Minimal dependencies (just `httpx`)
 - Python 3.9+
+
+> **Start free** — 100 validations + 10 enhanced credits, no credit card required.
+> [Get your API key →](https://app.truelist.io/signup?utm_source=github&utm_medium=readme&utm_campaign=free-plan&utm_content=truelist-python)
 
 ## Installation
 
@@ -183,6 +187,10 @@ Convenience properties: `is_valid`, `is_invalid`, `is_risky`, `is_unknown`, `is_
 | `ConnectionError` | Failed to connect to API |
 | `TimeoutError` | Request timed out |
 
+
+## Getting Started
+
+Sign up for a [free Truelist account](https://app.truelist.io/signup?utm_source=github&utm_medium=readme&utm_campaign=free-plan&utm_content=truelist-python) to get your API key. The free plan includes 100 validations and 10 enhanced credits — no credit card required.
 ## License
 
 MIT
